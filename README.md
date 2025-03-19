@@ -1,5 +1,7 @@
 # Scale Diversity Scripts
 
+[![Lint](https://github.com/socallinuxexpo/scale-dei/actions/workflows/lint.yml/badge.svg)](https://github.com/socallinuxexpo/scale-dei/actions/workflows/lint.yml)
+
 ## Scale CFP data
 
 Once logged in, download data from:
