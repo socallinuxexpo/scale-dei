@@ -9,8 +9,18 @@ Once logged in, download data from:
 But change `22x` to the desired year.
 
 Then run [diversity_reports.rb](src/diversity_reports.rb) on it and stick it in
-the spreadsheet.
+the spreadsheet:
+
+```bash
+diversity_reports.rb <file>
+```
 
 ## Attendee Data
 
-Currently this is manually requested from Lei.
+The [get_reg_demo_stats.py](src/get_reg_demo_stats.py) can be run on the
+reg system to generate two CSVs: `demo_data.csv` and `totals.csv`. You
+can then run `diversity_reports` on that too:
+
+```bash
+diversity_reports.rb --input-type reg --totals-csv totals.csv demo_data.csv
+```

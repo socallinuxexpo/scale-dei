@@ -5,13 +5,13 @@ on:
   pull_request:
 
 jobs:
-  ruby:
+  ruby-lint:
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -22,5 +22,32 @@ jobs:
       run: ./scripts/run_rubocop.sh
     - name: Install ruby dependencies
       run: bundle install
+
+  markdown-lint:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
+    - name: Install ruby dependencies
+      run: bundle install
     - name: Run markdownlint
       run: ./scripts/run_markdownlint.sh .
+
+  python-lint:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Install black
+      run:
+        sudo apt install black -y
+    - name: Run black
+      run: ./scripts/run_black.sh .

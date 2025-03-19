@@ -1,4 +1,5 @@
 on_push: ['lint']
 lint:
   - ./scripts/run_rubocop.sh
+  - ./scripts/run_black.sh .
   - ./scripts/run_markdownlint.sh .
