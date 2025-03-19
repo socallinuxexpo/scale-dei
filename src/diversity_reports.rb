@@ -12,7 +12,7 @@ ALL_DEMO_TYPES = [
   'employment status',
   'marital status',
   'household income',
-]
+].freeze
 
 # order makes it easier to pop into the spreadsheet
 ORDER_PREFS = {
@@ -38,9 +38,9 @@ ORDER_PREFS = {
     'no response',
   ],
   'gender' => [
-    'male', 'female', 'other', 'no response', 'prefer not to say', 'non-binary',
+    'male', 'female', 'other', 'no response', 'prefer not to say', 'non-binary'
   ],
-}
+}.freeze
 
 logger = Logger.new($stdout)
 logger.level = Logger::INFO
@@ -69,17 +69,17 @@ OptionParser.new do |opts|
 end.parse!
 
 filename = ARGV.pop
-fail "Need to specify a file" unless filename
+raise 'Need to specify a file' unless filename
+
 demo_data = CSV.table(filename)
 
 results = {}
-totals = {}
 possible_values = {}
 %w{accepts rejects totals}.each do |status|
   results[status] = {}
   demo_types.each do |type|
     results[status][type] = Hash.new(0)
-    possible_values[type] = Set.new()
+    possible_values[type] = Set.new
   end
 end
 
@@ -95,7 +95,7 @@ demo_data.each do |entry|
     elsif ['Rejected', ''].include?(entry[:status])
       results['rejects'][type][value] += 1
     else
-      fail "Got unexpected status: '#{entry[:status]}' for #{entry}"
+      raise "Got unexpected status: '#{entry[:status]}' for #{entry}"
     end
     results['totals'][type][value] += 1
   end
@@ -112,8 +112,8 @@ demo_types.each do |type|
     missing_vals = ORDER_PREFS[type] - possible
     unless missing_vals.empty?
       logger.warn(
-        'Did not see any entries with vals specified in order preference: '  +
-        missing_vals.join(', ')
+        'Did not see any entries with vals specified in order preference: ' +
+        missing_vals.join(', '),
       )
     end
     fields = ORDER_PREFS[type] + extra_vals
@@ -125,9 +125,9 @@ demo_types.each do |type|
   logger.info("\tPossible values: #{fields.join(', ')}")
   %w{totals accepts rejects}.each do |status|
     name = status == 'totals' ? 'Submissions' : status
-    logger.info("\t#{status.capitalize}: ")
+    logger.info("\t#{name.capitalize}: ")
     logger.info(
-      "\t#{fields.map { |value| results[status][type][value] }.join(', ')}"
+      "\t#{fields.map { |value| results[status][type][value] }.join(', ')}",
     )
   end
 end
