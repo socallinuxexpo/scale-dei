@@ -59,6 +59,16 @@ ORDER_PREFS = {
     'prefer not to say',
     'non-binary',
   ],
+  'household income' => [
+    'below $10k / year',
+    '$10k-$50k / year',
+    '$50k-$100k / year',
+    '$100k-$200k / year',
+    '$200k-$500k / year',
+    'more than $500k / year',
+    'prefer not to say',
+    'no response',
+  ],
 }.freeze
 
 def parse_cfp_data(
@@ -112,9 +122,6 @@ def parse_reg_data(
     results[type] ||= {}
     results[type][value] = count
   end
-
-  pp results
-  pp global_totals
 end
 
 def get_calculated_cfp_data(data, type, possible_values, global_totals, logger)
@@ -164,11 +171,19 @@ def gen_reg_output(type, static_fields, results, global_totals, logger, options)
     results[type][field]
   end
 
-  # then percentages
+  # then percentages of attendees
   fields += static_fields.map { |field| "pct:#{field}" }
   values += static_fields.map do |field|
     num = results[type][field].to_f
     ((num / global_totals['total']) * 100).round(1)
+  end
+
+  # then percentages of those who replied to this question
+  modified_fields = static_fields.reject { |x| x == 'no response' }
+  fields += modified_fields.map { |field| "pct_replies:#{field}" }
+  values += modified_fields.map do |field|
+    num = results[type][field].to_f
+    ((num / global_totals[type]) * 100).round(1)
   end
 
   case options[:output_type]
